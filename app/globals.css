@@ -1,26 +1,114 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html { scroll-behavior: smooth; }
+
+body {
+  background: #ffffff;
+  color: #0a1628;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Reveal on scroll ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-left  { opacity: 0; transform: translateX(-32px); transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1); }
+.reveal-right { opacity: 0; transform: translateX( 32px); transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1); }
+.reveal-left.visible, .reveal-right.visible { opacity: 1; transform: none; }
+
+/* ── Float ── */
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+.float { animation: float 4s ease-in-out infinite; }
+.float-slow { animation: float 5.5s ease-in-out infinite; }
+.float-fast { animation: float 3s ease-in-out infinite; }
+
+/* ── Nav ── */
+.nav-blur {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(10,22,40,0.08);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── Buttons ── */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: #0a1628; color: #fff;
+  font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  padding: 15px 36px; border-radius: 3px; border: none; cursor: pointer;
+  transition: background .2s, transform .15s, box-shadow .2s;
 }
+.btn-primary:hover { background: #162444; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10,22,40,.25); }
+
+.btn-outline {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  padding: 14px 36px; border-radius: 3px; border: 2px solid #0a1628;
+  color: #0a1628; background: transparent; cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+.btn-outline:hover { background: #f1f5fb; transform: translateY(-2px); }
+
+.btn-light {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: #fff; color: #0a1628;
+  font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  padding: 15px 36px; border-radius: 3px; border: none; cursor: pointer;
+  transition: opacity .2s, transform .15s;
+}
+.btn-light:hover { opacity: .88; transform: translateY(-2px); }
+
+/* ── Card ── */
+.card { transition: transform .25s, box-shadow .25s; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(10,22,40,.1); }
+
+/* ── Nav underline ── */
+.nav-link { position: relative; }
+.nav-link::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px;
+  background: #1d4ed8; transition: width .25s;
+}
+.nav-link:hover::after { width: 100%; }
+
+/* ── Fitness carousel (CSS-only, no JS timing) ── */
+/*
+  8 images × (4s display + 0.4s fade) = 35.2s total cycle
+  Each image: delay = i × 4.4s
+  Keyframe percentages (fade = 0.4s, step = 4.4s, cycle = 35.2s):
+    fade-in:  0.4/35.2 = 1.14%
+    hold end: 4.4/35.2 = 12.5%
+    fade-out: 4.8/35.2 = 13.64%
+*/
+@keyframes fitness-slide {
+  0%      { opacity: 0; }
+  1.14%   { opacity: 1; }
+  12.5%   { opacity: 1; }
+  13.64%  { opacity: 0; }
+  100%    { opacity: 0; }
+}
+.fitness-img {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: fitness-slide 35.2s linear infinite;
+  will-change: opacity;
+}
+
+/* ── Input ── */
+.input-dark {
+  flex: 1; padding: 15px 20px; border-radius: 3px;
+  background: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.18);
+  color: #fff; font-size: 14px; font-weight: 500; outline: none;
+  transition: border-color .2s;
+}
+.input-dark::placeholder { color: rgba(255,255,255,.4); }
+.input-dark:focus { border-color: rgba(255,255,255,.45); }
